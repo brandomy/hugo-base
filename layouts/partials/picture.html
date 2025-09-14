@@ -1,0 +1,15 @@
+{{ $img := . }}{{ $w := slice 480 768 1024 1600 }}
+{{ $avif := slice }}{{ $webp := slice }}{{ $jpeg := slice }}
+{{ range $w }}
+  {{ $avif = $avif | append ($img.Fit (printf "%dx0 q=70 avif" .)) }}
+  {{ $webp = $webp | append ($img.Fit (printf "%dx0 q=75 webp" .)) }}
+  {{ $jpeg = $jpeg | append ($img.Fit (printf "%dx0 q=80" .)) }}
+{{ end }}
+<picture>
+  <source type="image/avif" srcset="{{ range $i, $r := $avif }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $w $i }}w{{ end }}">
+  <source type="image/webp" srcset="{{ range $i, $r := $webp }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $w $i }}w{{ end }}">
+  <img src="{{ (index $jpeg 1).RelPermalink }}"
+       srcset="{{ range $i, $r := $jpeg }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $w $i }}w{{ end }}"
+       sizes="(max-width: 768px) 100vw, 768px"
+       alt="{{ $.Page.Title }}" loading="lazy" decoding="async">
+</picture>

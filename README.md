@@ -1,0 +1,1 @@
+Shared Hugo base with header/footer, CSS pipeline, and image helper.
