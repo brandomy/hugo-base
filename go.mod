@@ -1,1 +1,1 @@
-module github.com/yourorg/hugo-base
+module github.com/brandomy/hugo-base
