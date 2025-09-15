@@ -1,5 +1,5 @@
 {{/* Shared responsive image partial
-     Usage: {{< picture "hero.jpg" >}} via the site-level shortcode that forwards here.
+     Usage: {{< picture "hero.jpg" >}} via site-level shortcode.
 */}}
 
 {{ $img := . }}
@@ -10,9 +10,9 @@
 {{ $jpeg := slice }}
 
 {{ range $w := $widths }}
-  {{ $avif = $avif | append ($img.Fit (printf "%dx0 avif q70" $w)) }}
-  {{ $webp = $webp | append ($img.Fit (printf "%dx0 webp q75" $w)) }}
-  {{ $jpeg = $jpeg | append ($img.Fit (printf "%dx0 q80"     $w)) }}
+  {{ $avif = $avif | append ($img.Resize (printf "%dx avif q70" $w)) }}
+  {{ $webp = $webp | append ($img.Resize (printf "%dx webp q75" $w)) }}
+  {{ $jpeg = $jpeg | append ($img.Resize (printf "%dx q80"     $w)) }}
 {{ end }}
 
 <picture>
