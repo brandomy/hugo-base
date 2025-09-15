@@ -1,15 +1,29 @@
-{{ $img := . }}{{ $w := slice 480 768 1024 1600 }}
-{{ $avif := slice }}{{ $webp := slice }}{{ $jpeg := slice }}
-{{ range $w }}
-  {{ $avif = $avif | append ($img.Fit (printf "%dx0 q=70 avif" .)) }}
-  {{ $webp = $webp | append ($img.Fit (printf "%dx0 q=75 webp" .)) }}
-  {{ $jpeg = $jpeg | append ($img.Fit (printf "%dx0 q=80" .)) }}
+{{/* Shared responsive image partial
+     Usage: {{< picture "hero.jpg" >}} via the site-level shortcode that forwards here.
+*/}}
+
+{{ $img := . }}
+{{ $widths := slice 480 768 1024 1600 }}
+
+{{ $avif := slice }}
+{{ $webp := slice }}
+{{ $jpeg := slice }}
+
+{{ range $w := $widths }}
+  {{ $avif = $avif | append ($img.Fit (printf "%dx0 avif q70" $w)) }}
+  {{ $webp = $webp | append ($img.Fit (printf "%dx0 webp q75" $w)) }}
+  {{ $jpeg = $jpeg | append ($img.Fit (printf "%dx0 q80"     $w)) }}
 {{ end }}
+
 <picture>
-  <source type="image/avif" srcset="{{ range $i, $r := $avif }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $w $i }}w{{ end }}">
-  <source type="image/webp" srcset="{{ range $i, $r := $webp }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $w $i }}w{{ end }}">
-  <img src="{{ (index $jpeg 1).RelPermalink }}"
-       srcset="{{ range $i, $r := $jpeg }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $w $i }}w{{ end }}"
-       sizes="(max-width: 768px) 100vw, 768px"
-       alt="{{ $.Page.Title }}" loading="lazy" decoding="async">
+  <source type="image/avif"
+          srcset="{{ range $i, $r := $avif }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $widths $i }}w{{ end }}">
+  <source type="image/webp"
+          srcset="{{ range $i, $r := $webp }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $widths $i }}w{{ end }}">
+  <img
+    src="{{ (index $jpeg 1).RelPermalink }}"
+    srcset="{{ range $i, $r := $jpeg }}{{ if $i }}, {{ end }}{{ $r.RelPermalink }} {{ index $widths $i }}w{{ end }}"
+    sizes="(max-width: 768px) 100vw, 768px"
+    alt="{{ $.Page.Title }}"
+    loading="lazy" decoding="async">
 </picture>
